@@ -3,7 +3,7 @@ const http = require("http");
 const url = require("url");
 const qs = require("qs");
 const checkRegister = require("./controller/signup");
-const LoginControl = require('./controller/loginAccount.js')
+const LoginControl = require('./controller/loginAccount.js');
 const Connection = require("./model/connection");
 
 let connection = Connection.createConnection({ multipleStatements: true });

@@ -44,7 +44,7 @@ function LoginControl(req, res) {
             // ========================================================
             // Set quyền cho tài khoản ...............
                 let roleData = qs.parse(data[0]);
-                console.log('role =' + roleData);
+                console.log(roleData);
                 let role = roleData.role_id;
                 if (role === 1) {
                   console.log('Tài khoản Admin');
