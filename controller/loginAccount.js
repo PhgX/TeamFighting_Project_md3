@@ -2,7 +2,6 @@ const fs = require("fs");
 const qs = require("qs");
 
 const Connection = require("../model/connection.js");
-
 let connection = Connection.createConnection({multipleStatements: true});
 
 function LoginControl(req, res) {
