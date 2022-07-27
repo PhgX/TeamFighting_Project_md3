@@ -90,28 +90,16 @@ function LoginControl(req, res) {
               let role = roleData.role_id;
               if (role === 1) {
                 console.log("Tài khoản Admin");
-                fs.readFile("./views/home/admin.html", "utf-8", (err, data) => {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    res.writeHead(302, {'Location': '/admin'})
-                    res.writeHead(200, { "Content-Type": "text/html" });
-                    res.write(data);
-                    return res.end();
-                  }
-                });
+                res.writeHead(301, {
+                  location: '/admin'
+              });
+              return res.end();
               } else if (role === 2) {
                 console.log("Tài khoản User");
-                fs.readFile("./views/home/user.html", "utf-8", (err, data) => {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    res.writeHead(302, {'Location': '/user'})
-                    res.writeHead(200, { "Content-Type": "text/html" });
-                    res.write(data);
-                    return res.end();
-                  }
-                });
+                res.writeHead(301, {
+                  location: '/user'
+              });
+              return res.end();
               }
             }
           });
@@ -221,6 +209,64 @@ const server = http.createServer((req, res) => {
         } else {
           checkRegister.SignUpAccount(req, res);
         }
+        break;
+      }
+      case "/admin": {
+        fs.readFile("./views/home/admin.html", "utf-8", (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.write(data);
+            return res.end();
+          }
+        });
+        break;
+      }
+      case "/user": {
+        fs.readFile("./views/home/user.html", "utf-8", async (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            let categories = await getCate();
+            let products = await getProducts();
+            let cateText = "";
+            let productText = "";
+            for (let i = 0; i < categories.length; i++) {
+              let filter = categories[i].name;
+              filter = filter.toLowerCase();
+              // if (filter.includes(" ")) {
+              //   filter = filter.replace(" ","-");
+              // }
+              cateText += `<li data-filter=".${filter}">${categories[i].name}</li>`;
+            }
+            for (let i = 0; i < products.length; i++) {
+              let filter = products[i].catename;
+              filter = filter.toLowerCase();
+              productText += `<div class="col-lg-3 col-md-4 col-sm-6 mix ${filter}">
+            <div class="featured__item">
+                <div class="featured__item__pic set-bg" data-setbg="assets/home/img/featured/feature-1.jpg">
+                    <ul class="featured__item__pic__hover">
+                    <form action="#">
+                    <input type="number"  placeholder="Amount">
+                    <button type="submit" class="site-btn">BUY</button>
+                    </form>
+                    </ul>
+                </div>
+                <div class="featured__item__text">
+                    <h6><a href="#">${products[i].name}</a></h6>
+                    <h5>${products[i].price} VND</h5>
+                </div>
+            </div>
+        </div>`;
+            }
+            data = data.replace("{catelogies}", cateText);
+            data = data.replace("{products}", productText);
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.write(data);
+            return res.end();
+          }
+        });
         break;
       }
     }
